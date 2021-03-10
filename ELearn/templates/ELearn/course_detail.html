@@ -1,0 +1,64 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <div class="row"> 
+        <div class="col-3">
+            <h5>Course Name</h5>
+        </div>
+        <div class="col-9">
+            <h5 class="card-title">{{course.course_id}} {{course.course_name}}</h5>                    
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h5>Course Description</h5>
+        </div>
+        <div class="col-9">
+            <p class="card-text">{{course.course_desc}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h5>Course Instructor</h5>
+        </div>
+        <div class="col-9">
+            <p class="card-text">{{course.instructor.first_name}} {{course.instructor.last_name}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h5>Days</h5>
+        </div>
+        <div class="col-9">
+            <p class="card-text">{{course.days}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h5>Timings</h5>
+        </div>
+        <div class="col-9">
+            <p class="card-text">{{course.timing}}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h5>Instruction Mode</h5>
+        </div>
+        <div class="col-9">
+            <p class="card-text">{{course.mode}}</p>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col">
+            <a href="../createmodule/{{course.course_id}}" class="btn btn-primary" id = '{{course.course_id}}'>Create Module</a>
+        </div>
+    </div>
+</div>
+                         
+{% endblock %}
