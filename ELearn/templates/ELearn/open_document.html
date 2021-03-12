@@ -1,0 +1,13 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<!-- https://docs.google.com/viewer?embedded=true&url= -->
+<iframe class="doc" src="{{ file_path }}" height="500" width="800">
+</iframe>
+
+<!-- <iframe class="doc" src="https://docs.google.com/gview?url=http://writing.engr.psu.edu/workbooks/formal_report_template.doc&embedded=true"></iframe> -->
+
+{% endblock %}

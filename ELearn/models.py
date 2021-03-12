@@ -44,17 +44,22 @@ class Module(models.Model):
     def __str__(self):
         return f'{self.module_name}'
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'course_{0}/{1}/{2}'.format(instance.module.course.course_id,instance.module.module_id, filename)
+
 class Topic(models.Model):
-    link_or_file = models.CharField("Link/File", max_length=450, blank=False, null=False)
+    topic_url = models.CharField("Specify URL", max_length=450, blank=False, null=False)
+    topic_file = models.FileField("Upload file", upload_to=user_directory_path, blank=True, null=True)
     topic_type = models.CharField("Type of Topic",
-        choices=[('IL','Internal Link'),('EL','External Link'),('FL','File')],
+        choices=[('URL','URL'),('FL','File')],
         default='FL',
 		max_length=24,
     )
     module = models.ForeignKey(Module, db_column="module_id", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.link_or_file}'
+        return f'{self.topic_url}'
 
 class Assessment(models.Model):
     assess_id = models.AutoField(primary_key=True)

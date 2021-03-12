@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
 ]
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -66,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'ELearn.context_processors.get_courses',
+                'django.template.context_processors.media',
             ],
         },
     },

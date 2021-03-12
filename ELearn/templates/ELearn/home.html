@@ -3,23 +3,21 @@
 {% endblock %}
 {% block content %}
 {% load static %}
-<!-- <form action="" method="POST">
-    {% csrf_token %} -->
-    <div class="container">
-        <div class="row"> 
-            {% for course in Courses %} 
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                    <h5 class="card-title">{{course.course_id}} {{course.course_name}}</h5>                    
-                    <p class="card-text text-justify"><small>{{course.course_desc}}</small></p>
-                    <a href="coursedetail/{{course.course_id}}" class="btn btn-primary" id = '{{course.course_id}}'>View Details</a>            
-                    </div>
+
+<div class="container">
+    <div class="row"> 
+        {% for course in Courses %} 
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title">{{course.course_id}} {{course.course_name}}</h5>                    
+                <p class="card-text text-justify"><small>{{course.course_desc}}</small></p>
+                <a href="coursehome/{{course.course_id}}" class="btn btn-primary" id = '{{course.course_id}}'>View Details</a>            
                 </div>
             </div>
-            {% endfor %} 
-            <br/>
         </div>
+        {% endfor %} 
+        <br/>
     </div>
-<!-- </form> -->
+</div>
 {% endblock %}

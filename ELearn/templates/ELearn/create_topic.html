@@ -1,0 +1,58 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+Create Topic
+{% endblock %}
+{% block content %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+                {% endfor %}       
+                {% for field in form.visible_fields %}
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label" id="{{field.label}}">{{ field.label_tag }}</label>
+                    <div class="col-md-10">
+                        {% render_field field class="form-control" %}
+                    </div>
+                </div>
+                {% endfor %}                            
+                <div class="form-group row">
+                    <div class="offset-md-2 col-md-10">
+                        <button type="submit" name='module_id' class="btn btn-primary" value="{{module_id}}">Submit</button>        
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript'>
+    $(document).ready(function(){         
+        $("#id_topic_type").change(function(){
+            if(this.value == 'FL'){
+
+                $('input[type=file]').show();
+                $('label[id ="Upload file"]').show();
+            }
+            else{
+                $('input[type=file]').hide();
+                $('label[id ="Upload file"]').hide();
+            }
+        });
+        $("#id_topic_file").change(function(){
+            var filename = $('input[type=file]').val();
+            filename = filename.split('\\').pop();
+            $("#id_topic_url").val(filename);
+        });
+    });
+</script>
+
+{% endblock %}

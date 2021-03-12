@@ -1,0 +1,66 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <small><a href="../">Back to home</a></small>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-9">
+            <a href="../coursedetail/{{course.course_id}}" id='{{course.course_id}}'><h2>{{course.course_id}} {{course.course_name}}</h2></a>
+        </div>
+        <div class="col-3 text-right">
+            <a href="../createmodule/{{course.course_id}}" id = '{{course.course_id}}'>Create Module ></a>
+        </div>
+    </div>
+    
+    <hr/>
+
+    
+    <div class="accordion" id="accordionExample">
+        {% for module in modules %}
+        <div class="card">
+          <div class="card-header" id="heading_{{module.module_id}}">
+            <div class="row">
+              <div class="col-9">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}">
+                    {{ module.module_name }}
+                  </button>
+                </h5>
+              </div>
+              <div class="col-3 text-right">
+                <a href="../createtopic/{{module.module_id}}">Add topics ></a>
+              </div>
+            </div>
+          </div>      
+          <div id="{{module.module_id}}" class="collapse show" aria-labelledby="heading_{{module.module_id}}" data-parent="#accordionExample">
+            <div class="card-body">
+                {% for topic in topics %}
+                   {% if topic.module.module_id == module.module_id%}
+                      {% if topic.topic_file == ''%}   
+                        <a target="_blank" style="text-decoration-line: underline; color:blue" href="{{ topic.topic_url }}">{{ topic.topic_url}} </a>
+                      {% else %}                                        
+                      
+                        <a style="text-decoration-line: underline; color:darkcyan" href="../opendocument/{{ topic.topic_file }}">{{ topic.topic_url}} </a>
+                      {% endif %}
+                     <br/>
+                   {% endif %}
+                {% endfor %}
+            </div>
+          </div>
+        </div>   
+        {% endfor %}
+    </div>
+    
+</div>
+                         
+{% endblock %}

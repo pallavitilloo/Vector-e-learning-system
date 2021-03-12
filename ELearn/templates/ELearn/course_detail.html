@@ -5,6 +5,12 @@
 {% load static %}
 
 <div class="container">
+    <div class="row">
+        <div class="col">
+            <small><a href="../coursehome/{{course.course_id}}" id = '{{course.course_id}}'>Go Back</a></small>
+        </div>
+    </div>
+    <br/>
     <div class="row"> 
         <div class="col-3">
             <h5>Course Name</h5>
@@ -54,11 +60,7 @@
         </div>
     </div>
     <br/>
-    <div class="row">
-        <div class="col">
-            <a href="../createmodule/{{course.course_id}}" class="btn btn-primary" id = '{{course.course_id}}'>Create Module</a>
-        </div>
-    </div>
+    
 </div>
                          
 {% endblock %}
