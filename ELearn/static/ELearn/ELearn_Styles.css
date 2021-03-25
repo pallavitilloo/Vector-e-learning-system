@@ -65,6 +65,38 @@ span {
     align-items: stretch;
 }
 
+.tealColored{
+    color: #2E4053;
+}
+
+.tealLink{
+    color: #2E4053;
+    text-decoration: none;
+}
+
+.tealLink :hover{
+    color: #2E4053;
+    text-decoration: underline;
+}
+
+.lightGrey{
+    background: #2E4053;
+}
+
+.lightOrangeBackground{
+    background: #FF5733;
+}
+
+.whiteLink{
+    color:white;
+    text-decoration: none;
+}
+
+.whiteLink :hover{
+    color:white;
+    text-decoration: underline;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;

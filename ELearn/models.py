@@ -5,6 +5,8 @@ from django.dispatch import receiver
 
 # Create your models here.
 
+ALLOWED_FILE_TYPES = ['pdf','png','jpg']
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField("Profile Picture", default="static/OLS/default_user.png", upload_to='profile_pics')
@@ -60,6 +62,19 @@ class Topic(models.Model):
 
     def __str__(self):
         return f'{self.topic_url}'
+    
+    def find_typecheck(self):
+        filename = self.topic_file.name
+        try:
+           ext = filename.split('.')[-1]
+           if ext.lower() in  ALLOWED_FILE_TYPES:
+              file_type = 'VALID'
+           else:
+              file_type = 'INVALID'
+        except Exception:
+              file_type = 'ERROR'
+              
+        return file_type
 
 class Assessment(models.Model):
     assess_id = models.AutoField(primary_key=True)
@@ -68,27 +83,23 @@ class Assessment(models.Model):
     assess_time_limit = models.IntegerField("Time limit (mins.)", default=120, blank=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     module = models.CharField("Module ID", max_length=255)
+    is_published = models.BooleanField("Published", default=False)
 
     def __str__(self):
         return f'{self.assess_name}'
 
 class Question(models.Model):
     question_id = models.AutoField(primary_key=True)
-    question_text = models.TextField("Question", blank=False, null=False)
-    answer = models.CharField("Answer",
-        choices=[('FI','Fill-in'),('A','Option A'),('B','Option B'),('C','Option C'),('D','Option D')],
-        default='FI',
-		max_length=24,
-    )
-    answer_text = models.TextField("Answer", blank=True)
+    question_text = models.CharField("Question", max_length=1000, blank=False, null=False)
+    answer_text = models.CharField("Answer", blank=True, max_length=1000)
     question_type = models.CharField("Question Type", max_length=30,
         choices=[('FI','Fill-in'),('MCQ','Multiple Choice Question')]
     )
     question_points = models.IntegerField("Points", blank=False, default=0, null=False)
-    option_a = models.CharField("Option A", max_length=450)
-    option_b = models.CharField("Option B", max_length=450)
-    option_c = models.CharField("Option C", max_length=450)
-    option_d = models.CharField("Option D", max_length=450)
+    option_a = models.CharField("Option A", max_length=450, blank=True)
+    option_b = models.CharField("Option B", max_length=450, blank=True)
+    option_c = models.CharField("Option C", max_length=450, blank=True)
+    option_d = models.CharField("Option D", max_length=450, blank=True)
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
 
     def __str__(self):

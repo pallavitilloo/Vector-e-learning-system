@@ -1,0 +1,76 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-9">
+            {% for question in questions %}
+                <div class="row">
+                    <div class="col-10">
+                        <strong>Question : </strong>{{ question.question_text }}
+                    </div>
+                    <div class="col-2 text-right">
+                        {{ question.question_points }} points
+                    </div>
+                </div>
+                <br/>                     
+                {% if question.option_a != '' %}
+                    <div class="row">
+                        <div class="col">
+                            A.{{ question.option_a }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            B.{{ question.option_b }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            C.{{ question.option_c }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            D.{{ question.option_d }}
+                        </div>
+                    </div>
+                {% endif %}
+                <br/>  
+                <div class="row">
+                    <div class="col">
+                        <strong>Answer : </strong>{{ question.answer_text }}
+                    </div>
+                </div>
+                <hr/>
+            {% endfor %}        
+        </div>
+        <div class="col-1"></div>
+        <div class="col-2">
+            {% if not is_published %}
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'publishassessment' module_id=module_id %}">Publish this assessment</a>
+                </div>
+            </div>
+            <hr/>
+            {% endif %}            
+            <div class="row">
+                <div class="col">
+                    <a href="{% url 'takeassessment' module_id=module_id %}">Take this assessment</a>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col">
+                    <a href="#">View Student Stats</a>
+                </div>
+            </div>                           
+        </div>
+    </div> 
+</div>
+{% endblock %}

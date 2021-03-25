@@ -6,19 +6,17 @@ Create Topic
 {% endblock %}
 {% block content %}
 
-
 <div class="container-fluid">
-    <!-- <div class="row">
-        <div class="col">
-            <small><a href="{% url 'home'%}">Go to Home</a></small> 
-        </div>
-    </div> -->
     <div class="row">
-        <div class="col">
-            <h4>Add Topic for Module : {{ module_name }} </h4>
-        </div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'createmodule' course_id=course_id %}" role="button" class="btn btn-secondary">Coursework</a>
+            <a href="#" role="button" class="btn btn-secondary">Assignment</a>
+            <a href="#" role="button" class="btn btn-secondary">Project</a>
+            <a href="{% url 'createassessment' course_id=course_id %}" role="button" class="btn btn-primary">Assessment</a>
+        </div>        
     </div>
     <hr/>
+    <br/>
     <div class="row">
         <div class="col">
             <form action="" method="POST" enctype="multipart/form-data">
@@ -36,34 +34,11 @@ Create Topic
                 {% endfor %}                            
                 <div class="form-group row">
                     <div class="offset-md-2 col-md-10">
-                        <button type="submit" name='module_id' class="btn btn-primary" value="{{module_id}}">Submit</button>        
+                        <button type="submit" name='module_id' class="btn btn-primary" value="{{module_id}}">Create Assessment</button>        
                     </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-<script type='text/javascript'>
-    $(document).ready(function(){         
-        $("#id_topic_type").change(function(){
-            if(this.value == 'FL'){
-
-                $('input[type=file]').show();
-                $('label[id ="Upload file"]').show();
-            }
-            else{
-                $('input[type=file]').hide();
-                $('label[id ="Upload file"]').hide();
-            }
-        });
-        $("#id_topic_file").change(function(){
-            var filename = $('input[type=file]').val();
-            filename = filename.split('\\').pop();
-            $("#id_topic_url").val(filename);
-        });
-    });
-</script>
-
 {% endblock %}

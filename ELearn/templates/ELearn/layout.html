@@ -29,7 +29,7 @@
                     <li class="active">
                         <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" title="Courses">
                             <div id="sidebar-components">
-                                <strong><i class="fas fa-folder fa-2x"></i></strong>
+                                <strong><i class="fas fa-book fa-2x"></i></strong>
                                 <h5>My courses</h5>
                             </div>
                         </a>
@@ -37,7 +37,7 @@
                             <div id="sidebar-components">
                                 {% for course in CURRENT_USER_COURSES %}
                                     <li>
-                                        <a href="../coursehome/{{course.course_id}}" title="Web Development">{{course.course_name}}</a>
+                                        <a href="{% url 'coursehome' course_id=course.course_id %}" title="Web Development">{{course.course_name}}</a>
                                     </li>
                                 {% endfor %}
                             </div>

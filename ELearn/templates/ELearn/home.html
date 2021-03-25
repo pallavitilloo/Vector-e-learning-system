@@ -12,7 +12,7 @@
                 <div class="card-body">
                 <h5 class="card-title">{{course.course_id}} {{course.course_name}}</h5>                    
                 <p class="card-text text-justify"><small>{{course.course_desc}}</small></p>
-                <a href="coursehome/{{course.course_id}}" class="btn btn-primary" id = '{{course.course_id}}'>View Details</a>            
+                <a href="{% url 'coursehome' course_id=course.course_id %}" class="btn btn-primary" id = '{{course.course_id}}'>View Details</a>            
                 </div>
             </div>
         </div>

@@ -1,0 +1,137 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <strong>{{ assessment.course.course_id }} {{ assessment.course.course_name }} : {{ assessment.assess_name }} </strong>
+            </div>
+            <div class="col-6 text-right">
+                <strong>TOTAL : {{ assessment.assess_points }} POINTS </strong>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-6">
+                TOTAL TIME : {{ assessment.assess_time_limit }} mins
+            </div>
+            <div class="col-6 text-right">
+                REMAINING TIME : <input type="button" id="btnRemainingTime" value="{{ assessment.assess_time_limit }}" style="border: none;"/> mins
+            </div>
+        </div>
+        <hr/>
+        {% for question in questions %}
+        <div class="row">
+            <div class="col-2">
+                <strong>Question  </strong>
+            </div>
+            <div class="col-8">
+                {{ question.question_text }}
+            </div>
+            <div class="col-2 text-right">
+                {{ question.question_points }} points
+            </div>
+        </div>
+        <br/>
+        {% if question.option_a != '' %}
+        <div class="row">
+            <div class="col-2">                
+            </div>
+            <div class="col-10">
+                <div class="row">
+                    <div class="col">
+                        <input type="radio" id="{{ question.question_id }}_A" name="options_{{ question.question_id }}" value="A"> A. {{ question.option_a }}</input>            
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="radio" id="{{ question.question_id }}_B" name="options_{{ question.question_id }}" value="B"> B. {{ question.option_a }}</input>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="radio" id="{{ question.question_id }}_C" name="options_{{ question.question_id }}" value="C"> C. {{ question.option_c }}</input>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <input type="radio" id="{{ question.question_id }}_D" name="options_{{ question.question_id }}" value="D"> D. {{ question.option_d }}</input>
+                    </div>
+                </div>                
+            </div>
+        </div>                
+        {% else %}
+        <div class="row">
+            <div class="col-2">
+                <strong>Answer  </strong>
+            </div>
+            <div class="col-10">
+                <textarea name="Text1" cols="100" rows="10" name="{{ question.question_id }}_answer_FI" id="{{ question.question_id }}_answer_FI"></textarea>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                <input type="hidden" value="" name="{{ question.question_id }}_answer" id="{{ question.question_id }}_answer"/>
+            </div>
+        </div>
+        <hr/>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <button type="submit" name='take_assess' class="btn btn-primary" value="{{ assessment.assess_id }}">Submit</button>
+        </div>
+    </div>
+</form>
+
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+<script type='text/javascript'>
+    $(document).ready(function(){ 
+        var remMinutes = $('#btnRemainingTime').val();
+        var remMilliSec = remMinutes * 60 * 1000;
+        setTimeout(timeOver, remMilliSec);
+
+        var iterations = remMinutes;
+        
+        for( i=1 ; i < iterations-1 ; i++ ){
+            
+            setTimeout(updateTimer, i * 60 * 1000);
+        }        
+
+        $('input[type=radio]').change(function(){            
+            
+                var question_answer = $(this).attr('id'); 
+                var question_id = question_answer.split("_")[0];
+                var answer = question_answer.split("_")[1];
+                var answer_id = question_id+'_answer';
+                $('input[id="'+answer_id+'"]').val(answer);
+            
+        });
+
+        $('textarea').change(function(){
+            var question_answer = $(this).attr('id'); 
+            var question_id = question_answer.split("_")[0];
+            var answer = $(this).val();
+            var answer_id = question_id+'_answer';
+            $('input[id="'+answer_id+'"]').val(answer);
+            
+        });
+    });
+    function updateTimer(){
+        var remMinutes = $('#btnRemainingTime').val();
+        var remMilliSec = remMinutes * 60 * 1000;
+        remMilliSec = remMilliSec - 60000;
+        remMinutes = remMilliSec/60000;
+        $("#btnRemainingTime").val(remMinutes);
+    }
+    function timeOver(){
+        alert('Time out!!!');
+    }
+</script>
+{% endblock %}

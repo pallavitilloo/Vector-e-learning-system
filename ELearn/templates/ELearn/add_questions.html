@@ -6,16 +6,10 @@ Create Topic
 {% endblock %}
 {% block content %}
 
-
 <div class="container-fluid">
-    <!-- <div class="row">
-        <div class="col">
-            <small><a href="{% url 'home'%}">Go to Home</a></small> 
-        </div>
-    </div> -->
     <div class="row">
         <div class="col">
-            <h4>Add Topic for Module : {{ module_name }} </h4>
+            <h4>Add Questions</h4>
         </div>
     </div>
     <hr/>
@@ -36,7 +30,12 @@ Create Topic
                 {% endfor %}                            
                 <div class="form-group row">
                     <div class="offset-md-2 col-md-10">
-                        <button type="submit" name='module_id' class="btn btn-primary" value="{{module_id}}">Submit</button>        
+                        <button type="submit" name='question' class="btn btn-primary" value="question">Add Question</button>        
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-md-2 col-md-10">
+                        <button type="submit" name='question' onclick="create_assessment" class="btn btn-primary" value="{{ assess_id }}">Finish</button>        
                     </div>
                 </div>
             </form>
@@ -47,21 +46,29 @@ Create Topic
 <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
 <script type='text/javascript'>
     $(document).ready(function(){         
-        $("#id_topic_type").change(function(){
-            if(this.value == 'FL'){
-
-                $('input[type=file]').show();
-                $('label[id ="Upload file"]').show();
+        $("#id_question_type").change(function(){
+            if(this.value == 'FI'){
+                //Fill-in
+                $('#id_option_a').hide();
+                $('label[id="Option A"]').hide();
+                $('#id_option_b').hide();
+                $('label[id="Option B"]').hide();
+                $('#id_option_c').hide();
+                $('label[id="Option C"]').hide();
+                $('#id_option_d').hide();
+                $('label[id="Option D"]').hide(); 
             }
             else{
-                $('input[type=file]').hide();
-                $('label[id ="Upload file"]').hide();
+                //MCQ
+                $('#id_option_a').show();
+                $('label[id="Option A"]').show();
+                $('#id_option_b').show();
+                $('label[id="Option B"]').show();
+                $('#id_option_c').show();
+                $('label[id="Option C"]').show();
+                $('#id_option_d').show();
+                $('label[id="Option D"]').show(); 
             }
-        });
-        $("#id_topic_file").change(function(){
-            var filename = $('input[type=file]').val();
-            filename = filename.split('\\').pop();
-            $("#id_topic_url").val(filename);
         });
     });
 </script>
