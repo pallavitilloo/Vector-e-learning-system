@@ -1,0 +1,29 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+Inbox
+{% endblock %}
+{% block content %}
+
+<!-- <form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %} -->
+    <div class="container-fluid">
+        {% for mail in mailbox %}
+        <div class="row">
+            <div class="col-3">
+                {{ mail.msg_subject }} {{ mail.created_at }}
+            </div>
+            <div class="col-9">
+                FROM : {{ mail.sender.first_name }} {{ mail.sender.last_name }}
+                <br/>
+                <strong>{{ mail.msg_subject }}</strong>
+                <hr/>
+                <p>{{ mail.msg_content }}</p>                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+<!-- </form> -->
+
+{% endblock %}

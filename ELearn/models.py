@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-# Create your models here.
+import datetime
 
 ALLOWED_FILE_TYPES = ['pdf','png','jpg']
 
@@ -135,5 +134,13 @@ class Submission(models.Model):
     def __str__(self):
         return f'{self.submission_file}'
 
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver", blank=False)
+    receivers = models.CharField("To", max_length=255, blank=False)
+    msg_subject = models.CharField("Subject", blank=False, max_length=255)
+    msg_content = models.TextField("Body", blank=True)    
+    created_at = models.DateField("Created At", auto_now_add=True)
 
-
+    def __str__(self):
+        return f'{self.created_at} {self.msg_subject} '

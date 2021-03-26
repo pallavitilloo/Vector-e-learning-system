@@ -57,8 +57,14 @@
                     <a href="{% url 'publishassessment' module_id=module_id %}">Publish this assessment</a>
                 </div>
             </div>
-            <hr/>
-            {% endif %}            
+            {% else %}
+            <div class="row">
+                <div class="col">
+                    ✔️ Published
+                </div>
+            </div>            
+            {% endif %}   
+            <hr/>         
             <div class="row">
                 <div class="col">
                     <a href="{% url 'takeassessment' module_id=module_id %}">Take this assessment</a>
@@ -67,7 +73,7 @@
             <hr/>
             <div class="row">
                 <div class="col">
-                    <a href="#">View Student Stats</a>
+                    <a href="{% url 'studentstats' module_id=module_id %}">View Student Stats</a>
                 </div>
             </div>                           
         </div>

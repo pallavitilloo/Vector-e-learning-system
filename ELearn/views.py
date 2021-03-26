@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from ELearn.models import Course, Module, Topic, Assessment, Question, Assessment_Attempt
+from ELearn.models import Course, Module, Topic, Assessment, Question, Assessment_Attempt, Message, User
 from django.http import HttpResponse
-from ELearn.forms import CreateModuleForm, CreateTopicForm, CreateAssessmentForm, CreateQuestions
+from ELearn.forms import CreateModuleForm, CreateTopicForm, CreateAssessmentForm, CreateQuestions, CreateMessage
 from django.template import RequestContext
 from django.urls import reverse
+from django.db.models import Sum
+from pyexcel_xlsx import get_data as xlsx_get
+from django.utils.datastructures import MultiValueDictKeyError
 
 def home(request):
 	course_list = []
@@ -85,15 +88,18 @@ def create_assessment(request, course_id):
 def add_questions(request, assess_id):
 
 	add_question_form = CreateQuestions()
-
+	assessment = Assessment.objects.get(assess_id = assess_id)
+	questions_added = Question.objects.filter(assessment = assessment)
+	points_added = questions_added.aggregate(Sum('question_points'))
 	if request.method == 'POST':
 		add_question_form = CreateQuestions(request.POST)
 		add_question_form.instance.assessment = Assessment.objects.get(assess_id = assess_id)		
 		add_question_form.save()
 		messages.success(request, f'✔️ Question added')
 		add_question_form = CreateQuestions()
-		return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assess_id":assess_id})	
-	return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assess_id":assess_id})
+		points_added = Question.objects.filter(assessment = assessment).aggregate(Sum('question_points'))
+		return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assessment":assessment, "questions_added":questions_added, "points_added":points_added})	
+	return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assessment":assessment, "questions_added":questions_added, "points_added":points_added})
 
 def module_home(request, module_id):
 
@@ -138,3 +144,90 @@ def publish_assessment(request, module_id):
 	messages.success(request, f'✔️ Assessment published')
 	questions = Question.objects.filter(assessment=assessment.assess_id)
 	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":assessment.is_published})
+
+def view_student_stats(request, module_id):
+	assessment = Assessment.objects.get(module=module_id)
+	assess_attempts = Assessment_Attempt.objects.filter(assessment=assessment.assess_id)
+	student_scores = Assessment_Attempt.objects.filter(assessment=assessment.assess_id).values('attempt_user__first_name','attempt_user__last_name', 'attempt_user__username').annotate(Sum('result'))
+	return render(request, "ELearn/student_stats.html", {"assessment":assessment, "assess_attempts":assess_attempts, "student_scores":student_scores})
+
+
+def upload_questions(request, assess_id):
+
+	current_assessment = Assessment.objects.get(assess_id = assess_id)
+
+	if request.method == 'POST':
+		files = request.FILES
+
+		try:
+			excel_file = request.FILES['files']
+	
+			if (str(excel_file).split('.')[-1] == "xlsx"):
+				data = xlsx_get(excel_file, column_limit=9)
+				assessments = data["Assessment"]
+
+				if (len(assessments) > 1):
+
+					for assessment in assessments:
+
+						if (len(assessment) > 0): 
+
+							# It is not a header row
+							if (assessment[0] != "No"): 
+								
+								# Check if data length is less than 8 
+
+								if (len(assessment) == 9):								
+								
+									Question.objects.create(question_text = assessment[2], 
+														answer_text = assessment[3],
+    													question_type = assessment[1],
+        											    question_points = assessment[8],
+    													option_a = assessment[4],
+    													option_b = assessment[5],
+    													option_c = assessment[6],
+    													option_d = assessment[7],
+    													assessment = current_assessment)
+					messages.success(request, f'✔️ Assessment uploaded')
+					questions = Question.objects.filter(assessment=current_assessment.assess_id)
+					is_published = current_assessment.is_published
+					return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published})
+		
+		except MultiValueDictKeyError:
+			return redirect('home')
+
+	return render(request, "ELearn/upload_questions.html", {"assessment":current_assessment})
+
+def compose_message(request):
+	create_message_form = CreateMessage()
+
+	if request.method == 'POST':
+
+		create_message_form = CreateMessage(request.POST)
+		create_message_form.save(False)
+
+		receivers = create_message_form.instance.receivers.split(';')
+
+		for receiver in receivers:
+
+			to_user = User.objects.get(username=receiver)
+
+			if to_user == '':
+				to_user = User.objects.get(email=receiver)
+
+			Message.objects.create(sender=request.user, receiver=to_user, receivers=receivers,
+										msg_subject=create_message_form.instance.msg_subject,
+										msg_content=create_message_form.instance.msg_content)
+			
+		messages.success(request, f'✔️ Message sent!')
+		mailbox = Message.objects.filter(receiver=request.user)
+		return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
+	return render(request, "ELearn/compose_message.html", { "form":create_message_form })
+
+def inbox(request):
+	mailbox = Message.objects.filter(receiver=request.user)
+	return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
+
+def sent_items(request):
+	sent_items = Message.objects.filter(sender=request.user)
+	return render(request, "ELearn/sent_items.html", { "sent_items": sent_items})

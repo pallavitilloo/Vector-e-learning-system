@@ -42,42 +42,7 @@
                                 {% endfor %}
                             </div>
                         </ul>
-                    </li>
-                    <!-- <li>
-                        <div id="sidebar-components">
-                            <a href="#" title="Modules">
-                                <strong><i class="fas fa-folder-open fa-2x"></i></strong>
-                                <h5>Modules</h5>
-                            </a>
-                        </div>
-                    </li> -->
-                    <!-- <li>
-                        <div id="sidebar-components">
-                            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" title="Assessments">
-                                <strong><i class="fas fa-file-alt fa-2x"></i></strong>
-                                <h5>Assessments</h5>
-                            </a>
-                            <ul class="collapse list-unstyled" id="pageSubmenu">
-                                <li>
-                                    <a href="#">Assessment 1</a>
-                                </li>
-                                <li>
-                                    <a href="#">Assessment 2</a>
-                                </li>
-                                <li>
-                                    <a href="#">Assessment 3</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li> -->
-                    <!-- <li>
-                        <div id="sidebar-components">
-                            <a href="#" title="Topics">
-                                <strong><i class="fas fa-chalkboard-teacher fa-2x"></i></strong>
-                                <h5>Topics</h5>
-                            </a>
-                        </div>
-                    </li> -->
+                    </li>                    
                     <li>
                         <div id="sidebar-components">
                             <a href="#" title="Discussions">
@@ -88,10 +53,25 @@
                     </li>
                     <li>
                         <div id="sidebar-components">
-                            <a href="#" title="Inbox">
-                                <strong><i class="fas fa-envelope-square fa-2x"></i></strong>
-                                <h5>My Inbox</h5>
+                            <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" title="Inbox">
+                                <div id="sidebar-components">
+                                    <strong><i class="fas fa-envelope-square fa-2x"></i></strong>
+                                    <h5>Inbox</h5>
+                                </div>
                             </a>
+                            <ul class="collapse list-unstyled" id="pageSubmenu">
+                                <div id="sidebar-components">
+                                    <li>
+                                        <a href="{% url 'composemessage' %}">Compose</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'inbox' %}">My Inbox</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'sentitems' %}">Sent Items</a>
+                                    </li>
+                                </div>
+                            </ul>
                         </div>
                     </li>
                 </ul>                

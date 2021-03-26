@@ -1,0 +1,34 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+Create Topic
+{% endblock %}
+{% block content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                {{ assessment.course.course_id }} {{ assessment.course.course_name }} | {{ assessment.assess_name }}
+                <hr/>
+                    You can upload the assessment in a pre-defined template to save time. 
+                    <br/>
+                    Click here to download the template
+                <hr/>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-8">   
+                <input type="file" name="files" id="assess_file" value="{{assessment.assess_id}}">Upload</input>
+            </div>
+            <div class="col-4">
+                <input type="submit" id="btnUpload" value="Upload the template"/>
+            </div>
+        </div>    
+    </div>
+</form>
+
+{% endblock %}

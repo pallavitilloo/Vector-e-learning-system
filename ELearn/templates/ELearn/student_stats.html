@@ -1,0 +1,41 @@
+{% extends "ELearn/layout.html" %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <strong>{{ assessment.course.course_id }} {{ assessment.course.course_name }}</strong>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ assessment.assess_name }} : Student Statistics
+        </div>
+    </div>
+    <hr/>
+    <br/>
+    <div class="row">
+        <div class="col-6">
+            Student Name
+        </div>
+        <div class="col-6">
+            Score
+        </div>
+    </div>
+    <hr/>
+    {% for entry in student_scores %}
+    <div class="row" style="border-style:ridge">
+        <div class="col-6" style="border: brown;">
+            <a href="#">{{ entry.attempt_user__first_name }} {{ entry.attempt_user__last_name }}</a>
+        </div>     
+        <div class="col-6" style="border: brown;">
+            {{ entry.result__sum }}
+        </div>   
+    </div> 
+    {% endfor %}
+</div>
+{% endblock %}
