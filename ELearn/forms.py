@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import models
-from ELearn.models import Module, Topic, Assessment, Question, Assessment_Attempt, Message
+from ELearn.models import Module, Topic, Assessment, Question, Assessment_Attempt, Message, Comment, Assignment, Project
 
 class CreateModuleForm(forms.ModelForm):
 
@@ -51,3 +51,31 @@ class CreateMessage(forms.ModelForm):
         model = Message
         fields = ['sender','receiver','receivers','msg_subject','msg_content','created_at']
         exclude = ('sender','created_at','receiver')
+    
+class CreateDiscussion(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ['topic','content', 'user']
+        exclude = ('user',)
+
+class PostComment(forms.ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ['topic','content','user']
+        exclude = ('topic','user')
+
+class CreateAssignment(forms.ModelForm):
+
+    class Meta:
+        model = Assignment
+        fields = ['assign_name','assign_desc','assign_points','deadline','course','module']
+        exclude = ('course','module',)
+
+class CreateProject(forms.ModelForm):
+
+    class Meta:
+        model = Project
+        fields = ['project_name','project_desc','project_points','deadline','course','module']
+        exclude = ('course','module',)

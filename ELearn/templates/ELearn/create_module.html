@@ -7,35 +7,35 @@ Create Module
 {% block content %}
 
 <div class="container-fluid">
+    {% if form.instance.pk is None %}
     <div class="row">
         <div class="btn-group" role="group" aria-label="Basic example">
-            <a href="#" role="button" class="btn btn-primary">Coursework</a>
-            <a href="#" role="button" class="btn btn-secondary">Assignment</a>
-            <a href="#" role="button" class="btn btn-secondary">Project</a>
-            <a href="{% url 'createassessment' course_id=course_id %}" role="button" class="btn btn-secondary">Assessment</a>
+            <a href="{% url 'createmodule' course_id=course_id %}" role="button" class="btn folder-btn">Coursework</a>
+            <a href="{% url 'createassignment' course_id=course_id %}" role="button" class="btn lightGrey">Assignment</a>
+            <a href="{% url 'createproject' course_id=course_id %}" role="button" class="btn lightGrey">Project</a>
+            <a href="{% url 'createassessment' course_id=course_id %}" role="button" class="btn lightGrey">Assessment</a>
         </div>        
     </div>
-    <hr/>
     <br/>
+    <br/>
+    {% endif %}
     <div class="row">
         <div class="col">
             
-            <form action="" method="POST">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% for hidden_field in form.hidden_fields %}
-                {{ hidden_field }}
-                {% endfor %}       
-                {% for field in form.visible_fields %}
+                     
+                {% for field in form %}
                 <div class="form-group row">
                     <label class="col-md-2 col-form-label">{{ field.label_tag }}</label>
                     <div class="col-md-10">
-                        {% render_field field class="form-control" %}
+                        {% render_field field class="form-control" %}                        
                     </div>
                 </div>
                 {% endfor %}                            
                 <div class="form-group row">
-                    <div class="offset-md-2 col-md-10">
-                        <button type="submit" name='course_id' class="btn btn-primary" value="{{course_id}}">Create CourseWork</button>        
+                    <div class="col text-center">
+                        <button type="submit" name='course_id' class="btn button-blue" value="{{course_id}}">Save CourseWork</button>        
                     </div>
                 </div>
             </form>

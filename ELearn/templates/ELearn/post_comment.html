@@ -1,0 +1,63 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <strong>{{ topic }}</strong>
+            </div>
+        </div>
+        {% for entry in discussion %}
+        <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col">
+                        <img src="{{ entry.user.profile.image.url }}" title="{{entry.user.first_name}} {{entry.user.last_name}}" 
+                            style="border-radius: 50%;max-width: 40px; max-height: 40px;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <small>{{ entry.created_at }}</small>
+                    </div>
+                </div>  
+            </div>
+            <div class="col-8">
+                {{ entry.content }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row">
+            <div class="col">
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                    {% endfor %}       
+                    {% for field in form.visible_fields %}
+                    <div class="form-group row">
+                        <label class="col-4 col-form-label" id="{{field.label}}">{{ field.label_tag }}</label>
+                        <div class="col-8">
+                            {% render_field field class="form-control" %}
+                        </div>
+                    </div>
+                    {% endfor %}                            
+                    <div class="form-group row">
+                        <div class="col text-center">
+                            <button type="submit" name='comment_id' class="btn button-blue" value="{{comment_id}}">Post</button>        
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

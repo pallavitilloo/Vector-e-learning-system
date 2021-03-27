@@ -1,0 +1,44 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+Create Topic
+{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'createmodule' course_id=course_id %}" role="button" class="btn lightGrey">Coursework</a>
+            <a href="{% url 'createassignment' course_id=course_id %}" role="button" class="btn folder-btn">Assignment</a>
+            <a href="{% url 'createproject' course_id=course_id %}" role="button" class="btn lightGrey">Project</a>
+            <a href="{% url 'createassessment' course_id=course_id %}" role="button" class="btn lightGrey">Assessment</a>
+        </div>        
+    </div>
+    <hr/>
+    <br/>
+    <div class="row">
+        <div class="col">
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+                {% endfor %}       
+                {% for field in form.visible_fields %}
+                <div class="form-group row">
+                    <label class="col-3 col-form-label" id="{{field.label}}">{{ field.label_tag }}</label>
+                    <div class="col-9">
+                        {% render_field field class="form-control" %}
+                    </div>
+                </div>
+                {% endfor %}                            
+                <div class="form-group row">
+                    <div class="col text-center">
+                        <button type="submit" name='module_id' class="btn button-blue" value="{{course_id}}">Create Assignment</button>        
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

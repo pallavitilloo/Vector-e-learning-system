@@ -1,0 +1,47 @@
+{% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block title %}
+{% endblock %}
+{% block content %}
+{% load static %}
+
+
+<div class="container">
+    <div class="row"> 
+        <div class="col-3">
+            ASSIGNMENT
+        </div>   
+        <div class="col-9">
+            <strong>{{ assignment.assign_name }}</strong>
+        </div>          
+    </div> 
+    <hr/>
+    <div class="row">    
+        <div class="col-3">
+            Points
+        </div>   
+        <div class="col-9">
+            <strong>{{ assignment.assign_points }}</strong>
+        </div>          
+    </div>
+    <br/>
+    <div class="row">    
+        <div class="col-3">
+            Deadline
+        </div>   
+        <div class="col-9">
+            {{ assignment.deadline }}
+        </div>          
+    </div> 
+    <br/>
+    <div class="row">  
+        <div class="col-3">
+            Description
+        </div>   
+        <div class="col-9">  
+            {{ assignment.assign_desc }}
+        </div>          
+    </div>     
+</div>
+{% endblock %}

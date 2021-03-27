@@ -3,7 +3,45 @@
 {% endblock %}
 {% block content %}
 {% load static %}
-<div>
-    <h1>Discussions</h1>
+
+<div class="container">
+    {% regroup discussions by topic as comment_list %}
+
+    {% for comment in comment_list %}        
+        <div class="row">
+            <div class="col">
+                <strong>{{ comment.grouper }}</strong>                
+            </div>
+        </div>
+        <br/>
+        {% for entry in comment.list %}
+            <div class="row">
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col">
+                            <strong></strong>
+                            <img src="{{ entry.user.profile.image.url }}" title="{{entry.user.first_name}} {{entry.user.last_name}}" 
+                            style="border-radius: 50%;max-width: 40px; max-height: 40px;">                             
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            {{ entry.created_at }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    {{ entry.content }}
+                </div>
+            </div>
+            <br/>
+        {% endfor %}
+        <a class="orange-link" href="{% url 'postcomment' topic=comment.grouper %}" id='urlToReply'><i class="orange fas fa-reply"></i>&nbsp;Reply</a>     
+        <br/>
+        <br/>
+        <hr/>
+    {% endfor %}
+
 </div>
+
 {% endblock %}

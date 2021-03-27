@@ -1,52 +1,55 @@
 {% extends "ELearn/layout.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
 {% block title %}
 {% endblock %}
 {% block content %}
 {% load static %}
 
-<div class="container">
-  <div class="row">
-      <div class="col">
-          <small><a href="{% url 'coursehome' course_id=module.course.course_id %}" id = '{{course.course_id}}'>Go Back</a></small>
-      </div>
-  </div>
-  <br/>
-  <div class="row">
-    <div class="col-3">
-        <h5>Course</h5>
+<div class="container">    
+    <div class="row"> 
+        <div class="col-3">
+            COURSE
+        </div>   
+        <div class="col-9">
+            <strong>{{ module.course.course_id }} {{ module.course.course_name }}</strong>
+        </div>          
+    </div> 
+    <hr/>
+    <div class="row">    
+        <div class="col-3">
+            Module Name
+        </div>   
+        <div class="col-9">
+            <strong>{{module.module_name}}</strong>
+        </div>          
     </div>
-    <div class="col-9">
-        <p class="card-text">{{ module.course.course_id }} {{ module.course.course_name }}</p>
-    </div>
-</div>
-  <div class="row"> 
-      <div class="col-3">
-          <h5>Module Name</h5>
-      </div>
-      <div class="col-9">
-          <h5 class="card-title">{{module.module_name}}</h5>                    
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-3">
-          <h5>Module Description</h5>
-      </div>
-      <div class="col-9">
-          <p class="card-text">{{ module.module_desc }}</p>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-3">
-          <h5>Module Type</h5>
-      </div>
-      <div class="col-9">
-          <p class="card-text">{{ module.module_type }}</p>
-      </div>
-  </div>
-  
-  
-  <br/>
-  
-</div>
-                         
+    <br/>
+    <div class="row">    
+        <div class="col-3">
+            Module Type
+        </div>   
+        <div class="col-9">
+            {{ module.module_type }}
+        </div>          
+    </div> 
+    <br/>
+    <div class="row">  
+        <div class="col-3">
+            Module Description
+        </div>   
+        <div class="col-9">  
+            {% if module.module_desc %}
+                {{ module.module_desc }}
+            {% else %}
+                NA
+            {% endif %}
+        </div>          
+    </div>  
+    <div class="row">
+        <div class="col text-right">
+            <a href="{% url 'editmodule' module_id=module.module_id %}" class="orange-link btn" id = '{{module.module_id}}'>Edit</a>            
+        </div>
+    </div>  
+</div>                         
 {% endblock %}

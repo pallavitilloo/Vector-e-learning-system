@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from ELearn.models import Course, Module, Topic, Assessment, Question, Assessment_Attempt, Message, User
-from django.http import HttpResponse
-from ELearn.forms import CreateModuleForm, CreateTopicForm, CreateAssessmentForm, CreateQuestions, CreateMessage
+from ELearn.models import Course, Module, Topic, Assessment, Question, Assessment_Attempt, Message, User, Comment, Assignment, Project
+from django.http import HttpResponse, request
+from ELearn.forms import CreateModuleForm, CreateTopicForm, CreateAssessmentForm, CreateQuestions, CreateMessage, CreateDiscussion, PostComment, CreateAssignment, CreateProject
 from django.template import RequestContext
 from django.urls import reverse
 from django.db.models import Sum
@@ -33,6 +33,38 @@ def create_module(request, course_id):
 
 	return render(request, "ELearn/create_module.html", {"form" : create_module_form, "course_id":course_id})
 
+def edit_module(request, module_id):	
+    
+	module = Module.objects.get(module_id = module_id)
+	create_module_form = CreateModuleForm(request.POST or None, instance = module)
+	
+	if create_module_form.is_valid():
+		create_module_form.save()
+		return render(request, "ELearn/module_home.html", {"module":module})
+	
+	return render(request, "ELearn/create_module.html", {"form" : create_module_form, "course_id":module.course.course_id})	
+
+def delete_module(request, module_id):	
+    
+	module = Module.objects.get(module_id = module_id)	
+	course = Course.objects.get(course_id = module.course.course_id)	
+	if module.module_type == 'AS':
+		assessment = Assessment.objects.get(module = module_id)
+		assessment.delete()
+	elif module.module_type == 'AT':
+		assignment = Assignment.objects.get(module=module_id)
+		assignment.delete()
+	elif module.module_type == 'PT':
+		project = Project.objects.get(module = module_id)
+		project.delete()
+
+	module.delete()
+	
+	modules = Module.objects.filter(course=course)
+	topics = Topic.objects.filter(module__in=modules)
+	
+	return render(request, "ELearn/course_home.html", {"course": course, "modules":modules, "topics":topics})
+
 def course_home(request, course_id):
 
 	course = Course.objects.get(course_id=course_id)
@@ -60,6 +92,14 @@ def create_topic(request, module_id):
 		return redirect('coursehome', course_id=course.course_id)	
 
 	return render(request, "ELearn/create_topic.html", {"form" : create_topic_form, "module_id":module_id, "module_name":module_name})
+
+def delete_topic(request, topic_id):	
+	
+	topic = Topic.objects.get(pk=topic_id)
+	course_id = topic.module.course.course_id
+	topic.delete()
+	return redirect('coursehome', course_id=course_id)	
+	
 
 def open_document(request, course_id, module_id, file_path):
 	
@@ -99,6 +139,7 @@ def add_questions(request, assess_id):
 		add_question_form = CreateQuestions()
 		points_added = Question.objects.filter(assessment = assessment).aggregate(Sum('question_points'))
 		return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assessment":assessment, "questions_added":questions_added, "points_added":points_added})	
+	
 	return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assessment":assessment, "questions_added":questions_added, "points_added":points_added})
 
 def module_home(request, module_id):
@@ -111,7 +152,7 @@ def assessment_home(request, module_id):
 	assessment = Assessment.objects.get(module=module_id)
 	questions = Question.objects.filter(assessment=assessment.assess_id)
 	is_published = assessment.is_published
-	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":is_published})
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":is_published, "assess_id":assessment.assess_id})
 
 def take_assessment(request, module_id):	
 
@@ -143,7 +184,7 @@ def publish_assessment(request, module_id):
 	assessment.save()
 	messages.success(request, f'✔️ Assessment published')
 	questions = Question.objects.filter(assessment=assessment.assess_id)
-	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":assessment.is_published})
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":assessment.is_published, "assess_id":assessment.assess_id})
 
 def view_student_stats(request, module_id):
 	assessment = Assessment.objects.get(module=module_id)
@@ -191,12 +232,23 @@ def upload_questions(request, assess_id):
 					messages.success(request, f'✔️ Assessment uploaded')
 					questions = Question.objects.filter(assessment=current_assessment.assess_id)
 					is_published = current_assessment.is_published
-					return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published})
+					return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assess_id":current_assessment.assess_id})
 		
 		except MultiValueDictKeyError:
 			return redirect('home')
 
 	return render(request, "ELearn/upload_questions.html", {"assessment":current_assessment})
+
+def delete_question(request, ques_id):
+	question = Question.objects.get(pk=ques_id)
+	current_assessment = question.assessment
+	question.delete()
+	questions = Question.objects.filter(assessment=current_assessment.assess_id)
+	current_assessment.is_published = False
+	current_assessment.save()
+	is_published = current_assessment.is_published
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assess_id":current_assessment.assess_id})
+		
 
 def compose_message(request):
 	create_message_form = CreateMessage()
@@ -231,3 +283,76 @@ def inbox(request):
 def sent_items(request):
 	sent_items = Message.objects.filter(sender=request.user)
 	return render(request, "ELearn/sent_items.html", { "sent_items": sent_items})
+
+def create_discussion(request):
+	create_discussion_form = CreateDiscussion()
+	if request.method == 'POST':
+		create_discussion_form = CreateDiscussion(request.POST)
+		create_discussion_form.save(False)
+		create_discussion_form.instance.user = request.user
+		create_discussion_form.save()
+		messages.success(request, f'✔️ Discussion has been created')
+		discussions = Comment.objects.all().order_by('topic')
+		return render(request, "ELearn/discussions.html", { "discussions":discussions })
+	return render(request, "ELearn/create_discussion.html", { "form":create_discussion_form })
+
+def post_comment(request, topic):	
+	post_comment_form = PostComment()
+
+	if request.method == 'POST':
+		post_comment_form = PostComment(request.POST)
+		post_comment_form.save(False)
+		Comment.objects.create(topic=topic, content=post_comment_form.instance.content, user=request.user)
+		discussions = Comment.objects.all().order_by('topic')
+		return render(request, "ELearn/discussions.html", { "discussions":discussions })
+
+	discussion = Comment.objects.filter(topic=topic)
+	return render(request, "ELearn/post_comment.html", { "form":post_comment_form, "topic":topic, "discussion":discussion })
+
+def view_discussion(request):
+	discussions = Comment.objects.all().order_by('topic')
+	return render(request, "ELearn/discussions.html", { "discussions":discussions })
+
+def create_assignment(request, course_id):
+	create_assignment_form = CreateAssignment()
+	course = Course.objects.get(course_id=course_id)
+
+	if request.method == 'POST':
+		create_assignment_form = CreateAssignment(request.POST)
+		assignment = create_assignment_form.save(False)
+		module = Module(module_name = assignment.assign_name, module_type = 'AT', course=course)
+		module.save()
+		create_assignment_form.instance.module = module.module_id
+		create_assignment_form.instance.course = course
+		assignment = create_assignment_form.save()
+		messages.success(request, f'✔️ Assignment created')
+		return render(request, "ELearn/assignment_home.html", {"assignment":assignment})
+
+	return render(request, "ELearn/create_assignment.html", {"form" : create_assignment_form, "course_id":course_id})
+
+def assignment_home(request, module_id):
+	assignment = Assignment.objects.get(module=module_id)
+	return render(request, "ELearn/assignment_home.html", {"assignment":assignment, "module_id":module_id})
+
+
+def create_project(request, course_id):
+	create_project_form = CreateProject()
+	course = Course.objects.get(course_id=course_id)
+
+	if request.method == 'POST':
+		create_project_form = CreateProject(request.POST)
+		project = create_project_form.save(False)
+		module = Module(module_name = project.project_name, module_type = 'PT', course=course)
+		module.save()
+		create_project_form.instance.module = module.module_id
+		create_project_form.instance.course = course
+		project = create_project_form.save()
+		messages.success(request, f'✔️ Project created')
+		return render(request, "ELearn/project_home.html", {"project":project})
+
+	return render(request, "ELearn/create_project.html", {"form" : create_project_form, "course_id":course_id})
+
+def project_home(request, module_id):
+	project = Project.objects.get(module=module_id)
+	return render(request, "ELearn/project_home.html", {"project":project, "module_id":module_id})
+

@@ -21,6 +21,38 @@ p {
     color: #999;
 }
 
+.orange{
+    color:#FF5733;
+}
+
+.folder-btn{
+    color:#2E4053;
+    background-color: #FF5733;
+}
+
+.lightGrey{
+    background-color: #2E4053;
+    color:white   !important;
+}
+
+.button-blue{
+    background-color: #2E4053;
+    color: white;
+}
+
+.orange-link{
+    color: #FF5733;
+}
+
+.orange-link :visited{
+    color: #FF5733;
+}
+
+.orange-link :hover{
+    color: #2E4053;
+    text-decoration: underline;
+}
+
 a,
 a:hover,
 a:focus {
@@ -79,8 +111,11 @@ span {
     text-decoration: underline;
 }
 
-.lightGrey{
+
+
+.lightGrey :hover{
     background: #2E4053;
+    color:white;
 }
 
 .lightOrangeBackground{

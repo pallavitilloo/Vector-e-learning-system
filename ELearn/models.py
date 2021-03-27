@@ -144,3 +144,25 @@ class Message(models.Model):
 
     def __str__(self):
         return f'{self.created_at} {self.msg_subject} '
+
+class Comment(models.Model):
+    comment_id = models.AutoField(primary_key=True)
+    topic = models.CharField("Topic",max_length=255,blank=False)
+    content = models.TextField("Comment", blank=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField("Created At", auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.topic} {self.comment_id}'
+
+class Project(models.Model):
+    project_id = models.AutoField(primary_key=True)
+    project_name = models.CharField("Project Name", max_length=255)
+    project_desc = models.TextField("Project Description", blank=True)
+    project_points = models.IntegerField("Points",default=100,blank=False)
+    deadline = models.DateField("Submission Deadline")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    module = models.CharField("Module ID", max_length=255)
+
+    def __str__(self):
+        return f'{self.project_name}'

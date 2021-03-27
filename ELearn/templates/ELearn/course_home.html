@@ -27,37 +27,38 @@
     {% for module in modules %}
     <div class="accordion" id="accordionExample">        
         <div class="card">
-          <div class="card-header" id="heading_{{module.module_id}}">
+          <div class="card-header lightGrey" id="heading_{{module.module_id}}">
             <div class="row">
-              <div class="col-9">
+              <div class="col-11">
                 <h5 class="mb-0">
                   {% if module.module_type == 'CW' %}
                       <!-- Course Work -->                        
-                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}">
-                        <i class="fas fa-folder"></i>
+                      <button class="lightGrey" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}">                        
+                        <i id="folderIcon" class="fas fa-folder-open orange"></i>
                       </button>
-                      <a href="{% url 'modulehome' module_id=module.module_id %}"">{{ module.module_name }}</a>
+                      <a href="{% url 'modulehome' module_id=module.module_id %}">{{ module.module_name }}</a>
+
                   {% elif module.module_type == 'PT' %}
-                      <!-- Project -->
-                      <i class="fas fa-project-diagram"></i>
-                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}">
-                        Project : {{ module.module_name }}
-                      </button>
+
+                      <!-- Project -->                      
+                      <a href="{% url 'projecthome' module_id=module.module_id %}"><i class="fas fa-project-diagram orange"></i> {{ module.module_name }}</a>                      
+
                   {% elif module.module_type == 'AT' %}
+
                       <!-- Assignment -->
-                      <i class="fas fa-tasks"></i>
-                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}">
-                        Assignment : {{ module.module_name }}
-                      </button>
+                      <a href="{% url 'assignmenthome' module_id=module.module_id %}"><i class="fas fa-tasks orange"></i> {{ module.module_name }}</a>                      
+
                   {% else %}
+
                       <!-- Assessment -->
+                      <a href="{% url 'assessmenthome' module_id=module.module_id %}"><i class="fas fa-rocket orange"></i> {{ module.module_name }}</a>                    
                       
-                      <!-- <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#{{module.module_id}}" aria-expanded="true" aria-controls="{{module.module_id}}"> -->
-                        <a href="{% url 'assessmenthome' module_id=module.module_id %}"><i class="fas fa-rocket"></i> {{ module.module_name }}</a>
-                      <!-- </button> -->
                   {% endif %}
                 </h5>
-              </div>              
+              </div>  
+              <div class="col-1 text-right">
+                <a class="btn" href="{% url 'deletemodule' module_id=module.module_id %}"><i title="Delete" class="orange fas fa-trash"></i></a>
+              </div>            
             </div>
           </div>  
           {% if module.module_type == 'CW' %}
@@ -67,7 +68,7 @@
                 {% for topic in topics %}
                    {% if topic.module.module_id == module.module_id%}
                     <div class="row">
-                      <div class="col">
+                      <div class="col-11">
                         {% if topic.topic_file == '' %}                                   
                           <i class="fas fa-link tealColored"></i>&nbsp;
                           <a target="_blank" class="tealLink" href="{{ topic.topic_url }}">{{ topic.topic_url}} </a>                        
@@ -80,9 +81,12 @@
                               <a class="tealLink" href="../media/{{ topic.topic_file }}">{{ topic.topic_url}} </a>                        
                             {% endif %}
                         {% endif %}
+                      </div>
+                      <div class="col-1 text-right">
+                        <a class="btn" href="{% url 'deletetopic' topic_id=topic.pk %}"><i title="Delete" class="orange fas fa-trash-alt"></i></a>
                       </div> 
                     </div>  
-                    <br/>                              
+                    <hr/>                              
                    {% endif %}
                 {% endfor %}                
                 <div class="row">
@@ -99,5 +103,5 @@
     <br/>
     {% endfor %}
 </div>
-                         
+                  
 {% endblock %}

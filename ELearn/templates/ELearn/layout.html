@@ -45,10 +45,22 @@
                     </li>                    
                     <li>
                         <div id="sidebar-components">
-                            <a href="#" title="Discussions">
-                                <strong><i class="fas fa-comments fa-2x"></i></strong>
-                                <h5>Discussions</h5>
+                            <a href="#discussSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" title="Discuss">
+                                <div id="sidebar-components">
+                                    <strong><i class="fas fa-envelope-square fa-2x"></i></strong>
+                                    <h5>Discussions</h5>
+                                </div>
                             </a>
+                            <ul class="collapse list-unstyled" id="discussSubmenu">
+                                <div id="sidebar-components">
+                                    <li>
+                                        <a href="{% url 'creatediscussion' %}">Create New</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'discussions' %}">All Discussions</a>
+                                    </li>                                    
+                                </div>
+                            </ul>
                         </div>
                     </li>
                     <li>
@@ -95,10 +107,34 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="nav navbar-nav ml-auto">                                  
                                 <li class="nav-item active">
-                                    <p class="nav-link"><i class='fas fa-user-cog user-icon'></i> Welcome, {{ user.first_name }} {{ user.last_name }}</p>
+                                    <div class="nav-link">                                        
+                                        <div class="row">                                            
+                                            <div class="col">
+                                                <!-- <div class="row">
+                                                    <div class="col text-right">
+                                                        Welcome, {{ user.first_name }}
+                                                    </div>
+                                                </div> -->
+                                                <div class="row">
+                                                    <div class="col text-center">
+                                                        {% if CURRENT_USER_DP %}
+                                                        <img src="{{ CURRENT_USER_DP }}" style="border-radius: 50%;max-width: 50px; max-height: 50px;">
+                                                        {% else %}
+                                                        <i class='fas fa-user-cog user-icon'></i>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>    
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <small><a class="nav-link" href="{% url 'logout' %}">Logout</a></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </li>
                                 <li class="nav-item active">
-                                    <small><a class="nav-link" href="{% url 'logout' %}">Logout</a></small>
+                                    
                                 </li>
                             </ul>
                         </div>                   

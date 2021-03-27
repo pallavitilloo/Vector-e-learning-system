@@ -11,21 +11,23 @@ Create Topic
     <div class="container-fluid">
         <div class="row">
             <div class="col">
-                {{ assessment.course.course_id }} {{ assessment.course.course_name }} | {{ assessment.assess_name }}
+                <h4>{{ assessment.course.course_id }} {{ assessment.course.course_name }} | {{ assessment.assess_name }}</h4>
                 <hr/>
-                    You can upload the assessment in a pre-defined template to save time. 
-                    <br/>
-                    Click here to download the template
+                    You can upload the assessment in a pre-defined template to save time. Click <a class="orange-link" href="../media/assessment_template/assessment_upload_template.xlsx">here</a> to download the template
+                <br/><small>Please note that if the template is not filled-in properly, the assessment will not be created.</small>
                 <hr/>
             </div>
         </div>
-    
+        <br/>
         <div class="row">
-            <div class="col-8">   
-                <input type="file" name="files" id="assess_file" value="{{assessment.assess_id}}">Upload</input>
+            <div class="col">   
+                <input type="file" name="files" id="assess_file" value="{{assessment.assess_id}}"></input>
             </div>
-            <div class="col-4">
-                <input type="submit" id="btnUpload" value="Upload the template"/>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col">
+                <input type="submit" id="btnUpload" class="btn button-blue" value="Upload the assessment"/>
             </div>
         </div>    
     </div>

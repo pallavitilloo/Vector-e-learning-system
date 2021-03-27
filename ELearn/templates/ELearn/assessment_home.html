@@ -5,7 +5,14 @@
 {% load static %}
 
 
-<div class="container">
+<div class="container"> 
+    {% if not questions.all %}   
+    <div class="row">
+        <div class="col">
+            There are no questions added to the assessment right now. Please <a class="orange-link" href="{% url 'addquestions' assess_id=assess_id%}">add</a> questions to this assessment.
+        </div>
+    </div>
+    {% endif %}
     <div class="row">
         <div class="col-9">
             {% for question in questions %}
@@ -46,36 +53,45 @@
                         <strong>Answer : </strong>{{ question.answer_text }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col text-right">
+                        <a class="btn" href="{% url 'deletequestion' ques_id=question.pk %}"><i title="Delete Question" class="orange fas fa-trash-alt"></i></a>                      
+                    </div>
+                </div>
                 <hr/>
             {% endfor %}        
         </div>
         <div class="col-1"></div>
         <div class="col-2">
-            {% if not is_published %}
-            <div class="row">
-                <div class="col">
-                    <a href="{% url 'publishassessment' module_id=module_id %}">Publish this assessment</a>
+            {% if questions.all %}
+
+                {% if not is_published %}                
+                    <div class="row">
+                        <div class="col">
+                            <a class="orange-link" href="{% url 'publishassessment' module_id=module_id %}">Publish this assessment</a>
+                        </div>
+                    </div>
+                    <hr/>                
+                {% else %}
+                <div class="row">
+                    <div class="col">
+                        <p class="orange-link"><i class="fas fa-check-circle orange"></i> Published</p>
+                    </div>
+                </div>                        
+                {% endif %}   
+                        
+                <div class="row">
+                    <div class="col">
+                        <a class="orange-link" href="{% url 'takeassessment' module_id=module_id %}">Take this assessment</a>
+                    </div>
                 </div>
-            </div>
-            {% else %}
-            <div class="row">
-                <div class="col">
-                    ✔️ Published
+                <hr/>
+                <div class="row">
+                    <div class="col">
+                        <a class="orange-link" href="{% url 'studentstats' module_id=module_id %}">View Student Stats</a>
+                    </div>
                 </div>
-            </div>            
-            {% endif %}   
-            <hr/>         
-            <div class="row">
-                <div class="col">
-                    <a href="{% url 'takeassessment' module_id=module_id %}">Take this assessment</a>
-                </div>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col">
-                    <a href="{% url 'studentstats' module_id=module_id %}">View Student Stats</a>
-                </div>
-            </div>                           
+            {% endif %}                           
         </div>
     </div> 
 </div>

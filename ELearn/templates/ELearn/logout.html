@@ -14,13 +14,27 @@
 </head>
 
 <body>
-
-    <h2 style="padding-top: 20px;padding:bottom:50px;">You have signed out successfully !</h2>
-    <h2>Please close the browser to complete the logout process.</h2>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <br/>
+                <br/>
+                <h3>You have signed out successfully ! Please close the browser to complete the logout process.</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col">
+                <h4>Want to go back again?! Click <a class="login orange-link" href="{% url 'login' %}">here</a> to login</h4>
+            </div>
+        </div>
+    </div>
+    
+    <h2></h2>
     <br/>
     <div class="exists">
         <small class="chkexists">
-            Want to go back again?! Click <a class="login redLink" href="{% url 'login' %}">here</a> to login
+            
         </small>
     </div>
 

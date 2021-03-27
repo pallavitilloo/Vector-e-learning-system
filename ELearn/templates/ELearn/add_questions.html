@@ -7,30 +7,36 @@ Create Topic
 {% block content %}
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
-            {{ assessment.course.course_id }} {{ assessment.course.course_name }} | Questions added to assessment {{ assessment.assess_name }}
-            <hr/>
-            POINTS ADDED : {{ points_added.question_points__sum }} / {{ assessment.assess_points }}
-            <hr/>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            If you prefer uploading a template instead of adding questions one-by-one, please check 
-            <a href="{% url 'uploadquestions' assess_id=assessment.assess_id %}">this</a> link.
-        </div>
-    </div>
+    
+    
+    
     <div class="row">
         <div class="col-8">   
             {% if points_added.question_points__sum >= assessment.assess_points %}              
                 <div class="row">
                     <div class="col">
-                        <p>The assessment is ready! Click <a href="{% url 'assessmenthome' module_id=assessment.module %}">here</a> to check the assessment and publish it!</p>
+                        The assessment is ready! Click <a class="orange-link" href="{% url 'assessmenthome' module_id=assessment.module %}">here</a> to view it!</p>
                     </div>
                 </div>      
                 <br/>
             {% else %}
+            {% if points_added == 0 %}
+            <div class="row">
+                <div class="col">
+                    If you prefer uploading a template instead of adding questions one-by-one, please check 
+                    <a class="orange-link" href="{% url 'uploadquestions' assess_id=assessment.assess_id %}">this</a> link.
+                </div>
+            </div>
+            <hr/>
+            {% endif %}            
+                <div class="row">
+                    <div class="col">
+                        {{ assessment.course.course_id }} {{ assessment.course.course_name }} 
+                        <br/>
+                        POINTS ADDED : {{ points_added.question_points__sum }} / {{ assessment.assess_points }}
+                        <hr/>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <h4>Add Question</h4>
@@ -53,8 +59,8 @@ Create Topic
                                 </div>
                             {% endfor %}                            
                             <div class="form-group row">
-                                <div class="offset-md-2 col-md-10">
-                                    <button type="submit" name='question' class="btn btn-primary" value="question">Add Question</button>        
+                                <div class="col text-center">
+                                    <button type="submit" name='question' class="btn button-blue" value="question">Add Question</button>        
                                 </div>
                             </div>                            
                         </form>
@@ -63,6 +69,8 @@ Create Topic
             {% endif %}
         </div>
         <div class="col-4">
+            {% if questions_added.all %}
+            Questions added to {{ assessment.assess_name }}:
             {% for question_added in questions_added %}
             <div class="row">
                 <div class="col-10">
@@ -73,6 +81,7 @@ Create Topic
                 </div>
             </div>
             {% endfor %}
+            {% endif %}
         </div>
     </div>    
 </div>
