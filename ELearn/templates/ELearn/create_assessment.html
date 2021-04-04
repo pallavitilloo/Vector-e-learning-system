@@ -2,11 +2,17 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% block title %}
-Create Topic
+Create Assessment
 {% endblock %}
 {% block content %}
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=course_id %}">Back</a></small>
+        </div>
+    </div>
+    <br/>
     <div class="row">
         <div class="btn-group" role="group" aria-label="Basic example">
             <a href="{% url 'createmodule' course_id=course_id %}" role="button" class="btn lightGrey">Coursework</a>

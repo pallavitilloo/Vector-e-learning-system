@@ -1,5 +1,6 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Course Home
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -9,7 +10,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <small><a href="{% url 'home' %}">Back to home</a></small>
+            <small><a class="orange-link" href="{% url 'home' %}">Back</a></small>
         </div>
     </div>
     <br/>
@@ -23,7 +24,13 @@
     </div>
     
     <hr/>
-
+    {% if not modules.all %}
+    <div class="row">
+      <div class="col">
+        <i class="orange fas fa-exclamation-circle"></i> There are no modules currently in the course.
+      </div>
+    </div>
+    {% endif %}
     {% for module in modules %}
     <div class="accordion" id="accordionExample">        
         <div class="card">

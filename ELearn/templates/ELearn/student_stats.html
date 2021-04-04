@@ -1,5 +1,6 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Student Statistics
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -8,34 +9,51 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <strong>{{ assessment.course.course_id }} {{ assessment.course.course_name }}</strong>
+            <small><a class="orange-link" href="{% url 'assessmenthome' module_id=assessment.module %}">Back</a></small>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            {{ assessment.assess_name }} : Student Statistics
-        </div>
-    </div>
-    <hr/>
     <br/>
-    <div class="row">
-        <div class="col-6">
-            Student Name
+    {% if not student_scores.all %}
+        <div class="row">
+            <div class="col">
+                <i class="fas fa-exclamation-circle orange"></i> The student stats will be available when the assessment has been taken by students.
+                <hr/>
+                <br/>
+                You can take a test attempt <a class="orange-link" href="{% url 'takeassessment' module_id=assessment.module %}">here</a>.
+            </div>
         </div>
-        <div class="col-6">
-            Score
+    {% else %}
+        <div class="row">
+            <div class="col">
+                <strong>{{ assessment.course.course_id }} {{ assessment.course.course_name }}</strong>
+            </div>
         </div>
-    </div>
-    <hr/>
-    {% for entry in student_scores %}
-    <div class="row" style="border-style:ridge">
-        <div class="col-6" style="border: brown;">
-            <a href="#">{{ entry.attempt_user__first_name }} {{ entry.attempt_user__last_name }}</a>
-        </div>     
-        <div class="col-6" style="border: brown;">
-            {{ entry.result__sum }}
-        </div>   
-    </div> 
-    {% endfor %}
+        <div class="row">
+            <div class="col">
+                {{ assessment.assess_name }} : Student Statistics
+            </div>
+        </div>
+        <hr/>
+        <br/>
+        <div class="row">
+            <div class="col-6">
+                Student Name
+            </div>
+            <div class="col-6">
+                Score
+            </div>
+        </div>
+        <hr/>
+        {% for entry in student_scores %}
+        <div class="row" style="border-style:ridge">
+            <div class="col-6" style="border: brown;">
+                <a href="#">{{ entry.attempt_user__first_name }} {{ entry.attempt_user__last_name }}</a>
+            </div>     
+            <div class="col-6" style="border: brown;">
+                {{ entry.result__sum }}
+            </div>   
+        </div> 
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

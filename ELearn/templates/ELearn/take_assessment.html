@@ -1,5 +1,6 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Take assessment
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -7,6 +8,12 @@
 <form method="post">
     {% csrf_token %}
     <div class="container">
+        <div class="row">
+            <div class="col">
+                <small><a class="orange-link" href="{% url 'assessmenthome' module_id=assessment.module %}">Back</a></small>
+            </div>
+        </div>
+        <br/>
         <div class="row">
             <div class="col-6">
                 <strong>{{ assessment.course.course_id }} {{ assessment.course.course_name }} : {{ assessment.assess_name }} </strong>
@@ -131,7 +138,8 @@
         $("#btnRemainingTime").val(remMinutes);
     }
     function timeOver(){
-        alert('Time out!!!');
+        alert('Time out! Your assessment will not submitted');
+        $(':input[type="submit"]').prop('disabled', true);
     }
 </script>
 {% endblock %}

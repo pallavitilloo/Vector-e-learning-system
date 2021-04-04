@@ -1,15 +1,22 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Assessment
 {% endblock %}
 {% block content %}
 {% load static %}
 
 
 <div class="container"> 
+    <div class="row">
+        <div class="col">
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=assessment.course.course_id %}">Back</a></small>
+        </div>
+    </div>
+    <br/>
     {% if not questions.all %}   
     <div class="row">
         <div class="col">
-            There are no questions added to the assessment right now. Please <a class="orange-link" href="{% url 'addquestions' assess_id=assess_id%}">add</a> questions to this assessment.
+            There are no questions added to the assessment right now.
         </div>
     </div>
     {% endif %}
@@ -62,10 +69,9 @@
             {% endfor %}        
         </div>
         <div class="col-1"></div>
-        <div class="col-2">
-            {% if questions.all %}
-
-                {% if not is_published %}                
+        <div class="col-2">              
+            {% if points_added.question_points__sum == assessment.assess_points %}
+            {% if not is_published %}                
                     <div class="row">
                         <div class="col">
                             <a class="orange-link" href="{% url 'publishassessment' module_id=module_id %}">Publish this assessment</a>
@@ -78,8 +84,8 @@
                         <p class="orange-link"><i class="fas fa-check-circle orange"></i> Published</p>
                     </div>
                 </div>                        
-                {% endif %}   
-                        
+                {% endif %}
+
                 <div class="row">
                     <div class="col">
                         <a class="orange-link" href="{% url 'takeassessment' module_id=module_id %}">Take this assessment</a>
@@ -90,8 +96,14 @@
                     <div class="col">
                         <a class="orange-link" href="{% url 'studentstats' module_id=module_id %}">View Student Stats</a>
                     </div>
+                </div>            
+            {% else %}
+            <div class="row">
+                <div class="col">
+                    <a class="orange-link" href="{% url 'addquestions' assess_id=assessment.assess_id %}">Add Question</a>
                 </div>
-            {% endif %}                           
+            </div>
+            {% endif %}
         </div>
     </div> 
 </div>

@@ -2,12 +2,19 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% block title %}
+Project Home
 {% endblock %}
 {% block content %}
 {% load static %}
 
 
 <div class="container">
+    <div class="row">
+        <div class="col">
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=project.course.course_id %}">Back</a></small>
+        </div>
+    </div>
+    <br/>
     <div class="row"> 
         <div class="col-3">
             PROJECT
@@ -40,7 +47,7 @@
             Description
         </div>   
         <div class="col-9">  
-            {{ project.project_desc }}
+            {{ project.project_desc|linebreaks }}
         </div>          
     </div>     
 </div>

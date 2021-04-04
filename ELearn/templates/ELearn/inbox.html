@@ -6,24 +6,49 @@ Inbox
 {% endblock %}
 {% block content %}
 
-<!-- <form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %} -->
-    <div class="container-fluid">
+<div class="container-fluid">
+    {% if not mailbox.all %}
+        <div class="col">
+            <i class="fas fa-exclamation-circle orange"></i> You have no emails! <a class="orange-link" href="{% url 'composemessage' %}">Compose</a> a message now and get connected! 
+        <hr/>
+        </div>
+    {% else %}
         {% for mail in mailbox %}
         <div class="row">
-            <div class="col-3">
-                {{ mail.msg_subject }} {{ mail.created_at }}
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-1">
+                        <i class="fas fa-envelope-square"></i> 
+                    </div>
+                    <div class="col-11">
+                        <div class="row">
+                            <div class="col">
+                                <img src="{{ mail.sender.profile.image.url }}" title="{{mail.sender.first_name}} {{mail.sender.last_name}}" 
+                                    style="border-radius: 50%;max-width: 40px; max-height: 40px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ mail.msg_subject }}
+                                <br/>
+                                <small>{{ mail.created_at }}</small>
+                            </div>
+                        </div>                             
+                    </div>
+                </div>                    
             </div>
-            <div class="col-9">
-                FROM : {{ mail.sender.first_name }} {{ mail.sender.last_name }}
+            <div class="col-8">
+                TO:  {{ mail.receiver.first_name }} {{ mail.receiver.last_name }}
                 <br/>
                 <strong>{{ mail.msg_subject }}</strong>
                 <hr/>
-                <p>{{ mail.msg_content }}</p>                
+                <p>{{ mail.msg_content|linebreaks }}</p>                
             </div>
         </div>
+        <br/>
+        <br/>           
         {% endfor %}
-    </div>
-<!-- </form> -->
+    {% endif %}
+</div>
 
 {% endblock %}

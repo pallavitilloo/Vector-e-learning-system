@@ -1,25 +1,39 @@
+# Import models required and other classes required for creating the models 
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import datetime
 
+# Only these file types can open in the browser without an external program
+
 ALLOWED_FILE_TYPES = ['pdf','png','jpg']
 
+# Profile class : created for every user who is created by Administrator
+
 class Profile(models.Model):
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField("Profile Picture", default="static/OLS/default_user.png", upload_to='profile_pics')
 
     def __str__(self):
         return f'{self.user.username}'
 
+# This is to create or update user profile as user object is created
+
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
+
     if created:
         Profile.objects.create(user=instance)
     instance.profile.save()
 
+# The course model contains name, description, instructor, days, timings and mode of teaching
+
+
 class Course(models.Model):
+
     course_id = models.CharField("Course ID", max_length=255, blank=False, null=False, unique=True)
     course_name = models.CharField("Course Name", max_length=255, blank=False, null=False, unique=True)
     course_desc = models.TextField("Course Description", blank=True)
@@ -31,6 +45,9 @@ class Course(models.Model):
     def __str__(self):
         return f'{self.course_id} {self.course_name}'
  
+ # Module is generic for every type of module that is created in the course
+
+
 class Module(models.Model):
     module_id = models.AutoField(primary_key=True)
     module_name = models.CharField("Module Name", max_length=255, blank=False, null=False)
@@ -45,11 +62,17 @@ class Module(models.Model):
     def __str__(self):
         return f'{self.module_name}'
 
+# This method is called when trying to save the files uploaded for a course
+
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return 'course_{0}/{1}/{2}'.format(instance.module.course.course_id,instance.module.module_id, filename)
 
+
+# The topic is included in module course work. It only contains the URL or the file whichever is added
+
 class Topic(models.Model):
+
     topic_url = models.CharField("Specify URL", max_length=450, blank=False, null=False)
     topic_file = models.FileField("Upload file", upload_to=user_directory_path, blank=True, null=True)
     topic_type = models.CharField("Type of Topic",
@@ -62,6 +85,7 @@ class Topic(models.Model):
     def __str__(self):
         return f'{self.topic_url}'
     
+    # Method that checks the type of the file that is getting uploaded
     def find_typecheck(self):
         filename = self.topic_file.name
         try:
@@ -75,7 +99,10 @@ class Topic(models.Model):
               
         return file_type
 
+# Assessment is created with name, points, time limit in minutes. Other fields are foreign keys to course and module.
+
 class Assessment(models.Model):
+
     assess_id = models.AutoField(primary_key=True)
     assess_name = models.CharField("Assessment Name", max_length=255, blank=False, null=False)
     assess_points = models.IntegerField("Assessment Points", blank=False, null=False, default=100)
@@ -87,7 +114,11 @@ class Assessment(models.Model):
     def __str__(self):
         return f'{self.assess_name}'
 
+
+# Model Question contains all the questions created under the course. The view will govern which questions to be displayed
+
 class Question(models.Model):
+
     question_id = models.AutoField(primary_key=True)
     question_text = models.CharField("Question", max_length=1000, blank=False, null=False)
     answer_text = models.CharField("Answer", blank=True, max_length=1000)
@@ -104,7 +135,11 @@ class Question(models.Model):
     def __str__(self):
         return f'{self.question_text}'
 
+
+# Each attempt for an assessment creates an entry in the Assessment attempt table
+
 class Assessment_Attempt(models.Model):
+
     attempt_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user")
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, db_column="question_id", on_delete=models.CASCADE)
@@ -114,7 +149,11 @@ class Assessment_Attempt(models.Model):
     def __str__(self):
         return f'{self.attempt_user} {self.assessment}'
 
+
+# For creating assignments for the course
+
 class Assignment(models.Model):
+
     assign_id = models.AutoField(primary_key=True)
     assign_name = models.CharField("Assignment Name", max_length=255)
     assign_desc = models.TextField("Assignment Description", blank=True)
@@ -126,7 +165,11 @@ class Assignment(models.Model):
     def __str__(self):
         return f'{self.assign_name}'
 
+
+# The class is not used right now. Since the model has been created, it has been retained for future use.
+
 class Submission(models.Model):
+
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user")
     assign_id = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission_file = models.CharField("File", max_length=400)
@@ -134,7 +177,11 @@ class Submission(models.Model):
     def __str__(self):
         return f'{self.submission_file}'
 
+
+# Message is used for emails. All emails are stored as messages
+
 class Message(models.Model):
+
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="receiver", blank=False)
     receivers = models.CharField("To", max_length=255, blank=False)
@@ -145,7 +192,11 @@ class Message(models.Model):
     def __str__(self):
         return f'{self.created_at} {self.msg_subject} '
 
+
+# This is for the Discussion functionality. All discussions and comments on them are stored in this model
+
 class Comment(models.Model):
+
     comment_id = models.AutoField(primary_key=True)
     topic = models.CharField("Topic",max_length=255,blank=False)
     content = models.TextField("Comment", blank=False)
@@ -154,6 +205,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.topic} {self.comment_id}'
+
+
+# The model used when projects are created by the instructor under a course
 
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
@@ -166,3 +220,5 @@ class Project(models.Model):
 
     def __str__(self):
         return f'{self.project_name}'
+
+# end of file

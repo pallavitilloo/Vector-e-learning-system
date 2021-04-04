@@ -2,13 +2,17 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% block title %}
-Inbox
+Sent Items
 {% endblock %}
 {% block content %}
 
-<!-- <form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %} -->
-    <div class="container-fluid">
+<div class="container-fluid">
+    {% if not sent_items.all %}
+        <div class="col">
+            <i class="fas fa-exclamation-circle orange"></i> You have no sent items! <a class="orange-link" href="{% url 'composemessage' %}">Compose</a> a message now and get connected! 
+        <hr/>
+        </div>
+    {% else %}
         {% for mail in sent_items %}
         <div class="row">
             <div class="col-4">
@@ -17,34 +21,34 @@ Inbox
                         <i class="fas fa-envelope-square"></i> 
                     </div>
                     <div class="col-11">
-                        {{ mail.receiver.first_name }} {{ mail.receiver.last_name }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1"></div>
-                    <div class="col-11">
-                        {{ mail.created_at }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-1"></div>
-                    <div class="col-11">
-                        {{ mail.msg_subject }} 
+                        <div class="row">
+                            <div class="col">
+                                <img src="{{ mail.sender.profile.image.url }}" title="{{mail.sender.first_name}} {{mail.sender.last_name}}" 
+                                    style="border-radius: 50%;max-width: 40px; max-height: 40px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{ mail.msg_subject }}
+                                <br/>
+                                <small>{{ mail.created_at }}</small>
+                            </div>
+                        </div>                             
                     </div>
                 </div>
             </div>
             <div class="col-8">
-                TO :  {{ mail.receiver.first_name }} {{ mail.receiver.last_name }}
+                TO:  {{ mail.receiver.first_name }} {{ mail.receiver.last_name }}
                 <br/>
                 <strong>{{ mail.msg_subject }}</strong>
                 <hr/>
-                <p>{{ mail.msg_content }}</p>                
+                <p>{{ mail.msg_content|linebreaks }}</p>                
             </div>
         </div>
         <br/>
         <br/>
         {% endfor %}
-    </div>
-<!-- </form> -->
+    {% endif %}
+</div>
 
 {% endblock %}

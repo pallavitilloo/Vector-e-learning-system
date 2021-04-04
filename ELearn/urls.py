@@ -6,6 +6,9 @@ from django.contrib.auth import views as auth_views
 from django.http import request
 admin.autodiscover()
 
+# The name can be used to access any URL, instead of providing an absolute URL for a template
+# The view method that needs to be called when the name is specified, is mentioned in the views.<method_name>
+
 urlpatterns = [
     path("", views.home, name="home"),
     path("login/", auth_views.LoginView.as_view(template_name='ELearn/login.html'), name="login"),

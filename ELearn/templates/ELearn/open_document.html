@@ -1,9 +1,17 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Open document
 {% endblock %}
 {% block content %}
 {% load static %}
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <small><a href="{% url 'coursehome' course_id=course_id %}" class="orange-link">Back</a></small>
+        </div>
+    </div>
+</div>
 <iframe class="doc" src="{{ file_path }}" height="75%" width="100%">
 </iframe>
 

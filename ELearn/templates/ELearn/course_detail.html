@@ -1,5 +1,6 @@
 {% extends "ELearn/layout.html" %}
 {% block title %}
+Course Details
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -7,7 +8,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <small><a href="{% url 'coursehome' course_id=course.course_id %}" id = '{{course.course_id}}'>Go Back</a></small>
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=course.course_id %}" id = '{{course.course_id}}'>Back</a></small>
         </div>
     </div>
     <br/>

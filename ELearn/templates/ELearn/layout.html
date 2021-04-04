@@ -21,12 +21,12 @@
             <nav id="sidebar">
                 <div class="sidebar-header">
                     <a href="{% url 'home' %}">
-                        <h3>E-Learn</h3>
+                        <h3>VECTOR</h3>
                         <strong><img src="{% static 'ELearn/logo.png' %}"/></strong>
                     </a>    
                 </div>
                 <ul class="list-unstyled components">
-                    <li class="active">
+                    <li>
                         <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" title="Courses">
                             <div id="sidebar-components">
                                 <strong><i class="fas fa-book fa-2x"></i></strong>
@@ -86,6 +86,17 @@
                             </ul>
                         </div>
                     </li>
+                    {% if user.is_superuser %}
+                    <li>
+                        <div id="sidebar-components">
+                            <div class="row">
+                                <div class="col text-right">                                                
+                                    <small><a class="orange-link" target="_blank"href="/admin">Site Administration</a></small>
+                                </div>
+                            </div>   
+                        </div>                                             
+                    </li>                    
+                    {% endif %} 
                 </ul>                
             </nav>
 
@@ -109,12 +120,7 @@
                                 <li class="nav-item active">
                                     <div class="nav-link">                                        
                                         <div class="row">                                            
-                                            <div class="col">
-                                                <!-- <div class="row">
-                                                    <div class="col text-right">
-                                                        Welcome, {{ user.first_name }}
-                                                    </div>
-                                                </div> -->
+                                            <div class="col">                                                
                                                 <div class="row">
                                                     <div class="col text-center">
                                                         {% if CURRENT_USER_DP %}
@@ -130,14 +136,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>                                        
                                     </div>
                                 </li>
                                 <li class="nav-item active">
                                     
                                 </li>
                             </ul>
-                        </div>                   
+                        </div>                                          
                     </div>
                 </nav>    
                 {% if messages %}

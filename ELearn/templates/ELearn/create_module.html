@@ -7,6 +7,12 @@ Create Module
 {% block content %}
 
 <div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=course_id %}">Back</a></small>
+        </div>
+    </div>
+    <br/>
     {% if form.instance.pk is None %}
     <div class="row">
         <div class="btn-group" role="group" aria-label="Basic example">

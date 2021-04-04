@@ -1,16 +1,13 @@
 
-/* Dark color: #2E4053
-Greyish: #9FB4CA
-Light greenish: #DAF7A6
-Yellow: #FFC300
-Orange: #FF5733
-Red: #C70039
-Dark Red: #900C3F */
-
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 body {
     font-family: 'Poppins', sans-serif;
-    background: #fafafa;
+    background: rgb(253, 225, 200);
+}
+
+.smallNote{
+ font-size: x-small;
+ color:green;
 }
 
 p {
@@ -221,7 +218,7 @@ span {
 }
 
 #sidebar ul li a:hover {
-    color: #b3c7dd;
+    color: rgb(211, 210, 210);
     /* background: #fff; */
 }
 

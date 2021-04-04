@@ -1,3 +1,5 @@
+# Imports for all models and forms 
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
@@ -10,6 +12,9 @@ from django.db.models import Sum
 from pyexcel_xlsx import get_data as xlsx_get
 from django.utils.datastructures import MultiValueDictKeyError
 
+
+# The view method for Home gets all courses for current user and renders Home page
+
 def home(request):
 	course_list = []
 
@@ -18,7 +23,10 @@ def home(request):
 		course_list = Course.objects.filter(instructor=current_user)
 
 	return render(request, "ELearn/home.html", {"Courses": course_list})
-	
+
+
+# The method called when user wants to create module course work
+
 def create_module(request, course_id):	
 
 	create_module_form = CreateModuleForm()
@@ -26,12 +34,15 @@ def create_module(request, course_id):
 	if request.method == 'POST':
 		create_module_form = CreateModuleForm(request.POST)
 		create_module_form.instance.course = Course.objects.get(course_id=course_id)
-		create_module_form.instance.module_type = 'CW'
+		create_module_form.instance.module_type = 'CW' 			# Other modules are created in separate methods
 		module = create_module_form.save()
 		messages.success(request, f'✔️ Module created')
 		return redirect('createtopic',module_id=module.module_id)
 
 	return render(request, "ELearn/create_module.html", {"form" : create_module_form, "course_id":course_id})
+
+
+# The method that lets user edit module. Same form is used but is supplied with instance of the current form
 
 def edit_module(request, module_id):	
     
@@ -44,10 +55,15 @@ def edit_module(request, module_id):
 	
 	return render(request, "ELearn/create_module.html", {"form" : create_module_form, "course_id":module.course.course_id})	
 
+
+# Delete module function is available as a button click on the course home, so no separate template is loaded
 def delete_module(request, module_id):	
     
 	module = Module.objects.get(module_id = module_id)	
 	course = Course.objects.get(course_id = module.course.course_id)	
+
+	# If the module is assessment, assignment or project, corresponding entry in those tables also needs to be deleted
+
 	if module.module_type == 'AS':
 		assessment = Assessment.objects.get(module = module_id)
 		assessment.delete()
@@ -58,12 +74,16 @@ def delete_module(request, module_id):
 		project = Project.objects.get(module = module_id)
 		project.delete()
 
+	# This will be called for any module - course work, assessment, assignment or project
 	module.delete()
 	
 	modules = Module.objects.filter(course=course)
 	topics = Topic.objects.filter(module__in=modules)
 	
 	return render(request, "ELearn/course_home.html", {"course": course, "modules":modules, "topics":topics})
+
+
+# The page that shows all modules, topics for the course
 
 def course_home(request, course_id):
 
@@ -72,10 +92,15 @@ def course_home(request, course_id):
 	topics = Topic.objects.filter(module__in=modules)
 	return render(request, "ELearn/course_home.html", {"course": course, "modules":modules, "topics":topics})
 
+
+# The page shows just details about the course
+
 def course_detail(request, course_id):	
 
 	course = Course.objects.get(course_id=course_id)
 	return render(request, "ELearn/course_detail.html", {"course": course})
+
+# The method that gets called when topic needs to be created. It could be a URL or file.
 
 def create_topic(request, module_id):	
 
@@ -93,19 +118,27 @@ def create_topic(request, module_id):
 
 	return render(request, "ELearn/create_topic.html", {"form" : create_topic_form, "module_id":module_id, "module_name":module_name})
 
+
+# When a topic i.e. a URL or file under course work needs to be deleted.
+
 def delete_topic(request, topic_id):	
 	
 	topic = Topic.objects.get(pk=topic_id)
 	course_id = topic.module.course.course_id
 	topic.delete()
 	return redirect('coursehome', course_id=course_id)	
-	
+
+
+# This method helps in opening the PDF or images in the browser
 
 def open_document(request, course_id, module_id, file_path):
 	
 	file_path = f"http://127.0.0.1:8000/media/{course_id}/{module_id}/{file_path}"
-	return render(request, "ELearn/open_document.html", {"file_path" : file_path})
+	course_id = course_id.split('_')[1]
+	return render(request, "ELearn/open_document.html", {"file_path" : file_path, "course_id":course_id})
 
+
+# The method creates a new assessment. Questions need to be added later
 
 def create_assessment(request, course_id):
 
@@ -125,6 +158,8 @@ def create_assessment(request, course_id):
 
 	return render(request, "ELearn/create_assessment.html", {"form" : create_assess_form, "course_id":course_id})
 
+# The method to add questions for assessment
+
 def add_questions(request, assess_id):
 
 	add_question_form = CreateQuestions()
@@ -142,17 +177,25 @@ def add_questions(request, assess_id):
 	
 	return render(request, "ELearn/add_questions.html", {"form" : add_question_form, "assessment":assessment, "questions_added":questions_added, "points_added":points_added})
 
+# The method that is called to display details about a module - only applicable for course work
+
 def module_home(request, module_id):
 
 	module = Module.objects.get(module_id=module_id)
 	return render(request, "ELearn/module_home.html", {"module":module})
+
+# The method that gets called when assessment details need to be displayed. It displays the questions in the assessment
 
 def assessment_home(request, module_id):
 
 	assessment = Assessment.objects.get(module=module_id)
 	questions = Question.objects.filter(assessment=assessment.assess_id)
 	is_published = assessment.is_published
-	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":is_published, "assess_id":assessment.assess_id})
+	points_added = Question.objects.filter(assessment = assessment).aggregate(Sum('question_points'))
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":is_published, "assessment":assessment, "points_added":points_added})
+
+
+# To take an assessment attempt, this method is called.
 
 def take_assessment(request, module_id):	
 
@@ -178,13 +221,18 @@ def take_assessment(request, module_id):
 
 	return render(request, "ELearn/take_assessment.html", {"questions":questions, "assessment":assessment})
 
+# Every assessment needs to be published. Future use will be for when students need to take assessment after it is published
+
 def publish_assessment(request, module_id):
 	assessment = Assessment.objects.get(module=module_id)
 	assessment.is_published = True
 	assessment.save()
 	messages.success(request, f'✔️ Assessment published')
 	questions = Question.objects.filter(assessment=assessment.assess_id)
-	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":assessment.is_published, "assess_id":assessment.assess_id})
+	points_added = Question.objects.filter(assessment = assessment).aggregate(Sum('question_points'))
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":module_id, "is_published":assessment.is_published, "assessment":assessment, "points_added":points_added})
+
+# This displays student stats i.e. students and their scores in the course
 
 def view_student_stats(request, module_id):
 	assessment = Assessment.objects.get(module=module_id)
@@ -192,6 +240,8 @@ def view_student_stats(request, module_id):
 	student_scores = Assessment_Attempt.objects.filter(assessment=assessment.assess_id).values('attempt_user__first_name','attempt_user__last_name', 'attempt_user__username').annotate(Sum('result'))
 	return render(request, "ELearn/student_stats.html", {"assessment":assessment, "assess_attempts":assess_attempts, "student_scores":student_scores})
 
+
+# The method that uploads a defined format of question paper and creates questions into the assessment
 
 def upload_questions(request, assess_id):
 
@@ -232,12 +282,16 @@ def upload_questions(request, assess_id):
 					messages.success(request, f'✔️ Assessment uploaded')
 					questions = Question.objects.filter(assessment=current_assessment.assess_id)
 					is_published = current_assessment.is_published
-					return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assess_id":current_assessment.assess_id})
+					points_added = Question.objects.filter(assessment = current_assessment).aggregate(Sum('question_points'))
+					return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assessment":current_assessment, "points_added":points_added})
 		
 		except MultiValueDictKeyError:
 			return redirect('home')
 
 	return render(request, "ELearn/upload_questions.html", {"assessment":current_assessment})
+
+
+# If any questions need to be deleted, the method is called
 
 def delete_question(request, ques_id):
 	question = Question.objects.get(pk=ques_id)
@@ -247,8 +301,11 @@ def delete_question(request, ques_id):
 	current_assessment.is_published = False
 	current_assessment.save()
 	is_published = current_assessment.is_published
-	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assess_id":current_assessment.assess_id})
+	points_added = Question.objects.filter(assessment = current_assessment).aggregate(Sum('question_points'))
+	return render(request, "ELearn/assessment_home.html", {"questions":questions, "module_id":current_assessment.module, "is_published":is_published, "assessment":current_assessment, "points_added":points_added})
 		
+
+# Method that gets called when composing email message
 
 def compose_message(request):
 	create_message_form = CreateMessage()
@@ -261,6 +318,8 @@ def compose_message(request):
 		receivers = create_message_form.instance.receivers.split(';')
 
 		for receiver in receivers:
+
+			# users can either supply usernames or emails separated by semi-colons
 
 			to_user = User.objects.get(username=receiver)
 
@@ -276,13 +335,21 @@ def compose_message(request):
 		return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
 	return render(request, "ELearn/compose_message.html", { "form":create_message_form })
 
+
+# To return the inbox of the current user, filter by the request.user
+
 def inbox(request):
 	mailbox = Message.objects.filter(receiver=request.user)
 	return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
 
+
+# To return the Sent items of the current user, filter by the request.user
+
 def sent_items(request):
 	sent_items = Message.objects.filter(sender=request.user)
 	return render(request, "ELearn/sent_items.html", { "sent_items": sent_items})
+
+# To create a new discussion thread
 
 def create_discussion(request):
 	create_discussion_form = CreateDiscussion()
@@ -295,6 +362,9 @@ def create_discussion(request):
 		discussions = Comment.objects.all().order_by('topic')
 		return render(request, "ELearn/discussions.html", { "discussions":discussions })
 	return render(request, "ELearn/create_discussion.html", { "form":create_discussion_form })
+
+
+# This posts comment on an ongoing discussion thread
 
 def post_comment(request, topic):	
 	post_comment_form = PostComment()
@@ -309,9 +379,13 @@ def post_comment(request, topic):
 	discussion = Comment.objects.filter(topic=topic)
 	return render(request, "ELearn/post_comment.html", { "form":post_comment_form, "topic":topic, "discussion":discussion })
 
+# To view all discussions
+
 def view_discussion(request):
 	discussions = Comment.objects.all().order_by('topic')
 	return render(request, "ELearn/discussions.html", { "discussions":discussions })
+
+# Creates a new assignment for the current course
 
 def create_assignment(request, course_id):
 	create_assignment_form = CreateAssignment()
@@ -330,10 +404,14 @@ def create_assignment(request, course_id):
 
 	return render(request, "ELearn/create_assignment.html", {"form" : create_assignment_form, "course_id":course_id})
 
+# Shows the assignment whichever is clicked
+
 def assignment_home(request, module_id):
 	assignment = Assignment.objects.get(module=module_id)
 	return render(request, "ELearn/assignment_home.html", {"assignment":assignment, "module_id":module_id})
 
+
+# Creates a new project for the current course
 
 def create_project(request, course_id):
 	create_project_form = CreateProject()
@@ -352,7 +430,10 @@ def create_project(request, course_id):
 
 	return render(request, "ELearn/create_project.html", {"form" : create_project_form, "course_id":course_id})
 
+# Shows the project whichever is clicked
+
 def project_home(request, module_id):
 	project = Project.objects.get(module=module_id)
 	return render(request, "ELearn/project_home.html", {"project":project, "module_id":module_id})
 
+# End of file

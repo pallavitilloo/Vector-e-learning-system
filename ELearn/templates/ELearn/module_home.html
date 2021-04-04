@@ -2,11 +2,22 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% block title %}
+Module Home
 {% endblock %}
 {% block content %}
 {% load static %}
 
-<div class="container">    
+<div class="container">  
+    <div class="row">
+        <div class="col-6">
+            <small><a class="orange-link" href="{% url 'coursehome' course_id=module.course.course_id %}">Back</a></small>
+        </div>
+        <div class="col-6 text-right">
+            <a href="{% url 'createtopic' module_id=module.module_id %}" class="orange-link btn" id = '{{module.module_id}}'>Create Topic</a>            
+        </div>  
+    </div>
+    <br/>
+     
     <div class="row"> 
         <div class="col-3">
             COURSE
@@ -46,10 +57,13 @@
             {% endif %}
         </div>          
     </div>  
+    <hr/>
+    <br/>
+    
     <div class="row">
         <div class="col text-right">
-            <a href="{% url 'editmodule' module_id=module.module_id %}" class="orange-link btn" id = '{{module.module_id}}'>Edit</a>            
-        </div>
+            <a href="{% url 'editmodule' module_id=module.module_id %}" class="orange-link btn" id = '{{module.module_id}}'>Edit Module</a>            
+        </div> 
     </div>  
 </div>                         
 {% endblock %}
