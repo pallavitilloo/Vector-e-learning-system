@@ -312,27 +312,33 @@ def compose_message(request):
 
 	if request.method == 'POST':
 
-		create_message_form = CreateMessage(request.POST)
-		create_message_form.save(False)
-
-		receivers = create_message_form.instance.receivers.split(';')
-
-		for receiver in receivers:
-
-			# users can either supply usernames or emails separated by semi-colons
-
-			to_user = User.objects.get(username=receiver)
-
-			if to_user == '':
-				to_user = User.objects.get(email=receiver)
-
-			Message.objects.create(sender=request.user, receiver=to_user, receivers=receivers,
-										msg_subject=create_message_form.instance.msg_subject,
-										msg_content=create_message_form.instance.msg_content)
+		try:
+			create_message_form = CreateMessage(request.POST)
+			create_message_form.save(False)
 			
-		messages.success(request, f'✔️ Message sent!')
-		mailbox = Message.objects.filter(receiver=request.user)
-		return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
+			receivers = create_message_form.instance.receivers.split(';')
+
+			for receiver in receivers:
+
+				if receiver != '':
+					# users can either supply usernames or emails separated by semi-colons
+
+					to_user = User.objects.get(username=receiver)
+
+					if to_user == '':
+						to_user = User.objects.get(email=receiver)
+
+					Message.objects.create(sender=request.user, receiver=to_user, receivers=receivers,
+												msg_subject=create_message_form.instance.msg_subject,
+												msg_content=create_message_form.instance.msg_content)
+				
+			messages.success(request, f'✔️ Message sent!')
+			mailbox = Message.objects.filter(receiver=request.user)
+			return render(request, "ELearn/inbox.html", { "mailbox": mailbox})
+		
+		except:
+			return redirect('home')
+
 	return render(request, "ELearn/compose_message.html", { "form":create_message_form })
 
 
